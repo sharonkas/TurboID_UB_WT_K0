@@ -18,14 +18,14 @@ se_wt_ub_mg = df['SE_UB_WT_BR_MG_SaintScore']
 df_filtered = df[(se_wt_ub > 0.65) | (se_wt_ub_mg > 0.65)].copy()
 
 conditions = [
-    ('WT DeSI1\nWT-Ub', 'WT_UB_WT_BR_SaintScore'),
-    ('WT DeSI1\nWT-Ub\n+MG', 'WT_UB_WT_BR_MG_SaintScore'),
-    ('WT DeSI1\nK0-Ub', 'WT_KO_BR_SaintScore'),
-    ('WT DeSI1\nK0-Ub\n+MG', 'WT_KO_BR_MG_SaintScore'),
-    ('SE DeSI1\nWT-Ub', 'SE_UB_WT_BR_SaintScore'),
-    ('SE DeSI1\nWT-Ub\n+MG', 'SE_UB_WT_BR_MG_SaintScore'),
-    ('SE DeSI1\nK0-Ub', 'SE_KO_BR_SaintScore'),
-    ('SE DeSI1\nK0-Ub\n+MG', 'SE_KO_BR_MG_SaintScore'),
+    ('WT/WT-Ub', 'WT_UB_WT_BR_SaintScore'),
+    ('WT/WT-Ub+MG', 'WT_UB_WT_BR_MG_SaintScore'),
+    ('WT/K0-Ub', 'WT_KO_BR_SaintScore'),
+    ('WT/K0-Ub+MG', 'WT_KO_BR_MG_SaintScore'),
+    ('SE/WT-Ub', 'SE_UB_WT_BR_SaintScore'),
+    ('SE/WT-Ub+MG', 'SE_UB_WT_BR_MG_SaintScore'),
+    ('SE/K0-Ub', 'SE_KO_BR_SaintScore'),
+    ('SE/K0-Ub+MG', 'SE_KO_BR_MG_SaintScore'),
 ]
 
 saint_matrix = pd.DataFrame()
@@ -57,19 +57,25 @@ for cat_list in [translation_rqc, ups_proteostasis, cytoskeletal_membrane, other
 
 remaining = [p for p in saint_matrix.index if p not in ordered_proteins]
 if remaining:
-    se_scores = saint_matrix.loc[remaining, 'SE DeSI1\nWT-Ub'].fillna(0) + \
-                saint_matrix.loc[remaining, 'SE DeSI1\nWT-Ub\n+MG'].fillna(0)
+    se_scores = saint_matrix.loc[remaining, 'SE/WT-Ub'].fillna(0) + \
+                saint_matrix.loc[remaining, 'SE/WT-Ub+MG'].fillna(0)
     remaining_sorted = se_scores.sort_values(ascending=False).index.tolist()
     ordered_proteins.extend(remaining_sorted)
 
 saint_subset = saint_matrix.loc[ordered_proteins]
 
-fig, ax = plt.subplots(figsize=(10, 12))
+# Calculate figure size for square cells (compact layout)
+n_rows, n_cols = saint_subset.shape
+cell_size = 0.3  # size of each cell in inches
+fig_width = n_cols * cell_size + 3  # extra space for labels and colorbar
+fig_height = n_rows * cell_size + 2  # extra space for title and x-labels
+
+fig, ax = plt.subplots(figsize=(fig_width, fig_height))
 
 colors = ['#deebf7', '#c6dbef', '#9ecae1', '#ffffff', '#fee0d2', '#fc9272', '#de2d26', '#a50f15', '#67000d']
 cmap = LinearSegmentedColormap.from_list('blue_white_red', colors, N=100)
 
-im = ax.imshow(saint_subset.values, cmap=cmap, aspect='auto', 
+im = ax.imshow(saint_subset.values, cmap=cmap, aspect='equal',
                vmin=0, vmax=1, interpolation='nearest')
 
 for i in range(len(saint_subset) + 1):
@@ -78,11 +84,11 @@ for j in range(len(saint_subset.columns) + 1):
     ax.axvline(j - 0.5, color='white', linewidth=0.5)
 
 ax.set_xticks(range(len(saint_subset.columns)))
-ax.set_xticklabels(saint_subset.columns, fontsize=10, rotation=0, ha='center')
+ax.set_xticklabels(saint_subset.columns, fontsize=8, rotation=45, ha='right')
 ax.xaxis.tick_bottom()
 
 ax.set_yticks(range(len(saint_subset)))
-ax.set_yticklabels(saint_subset.index, fontsize=9)
+ax.set_yticklabels(saint_subset.index, fontsize=7)
 
 for spine in ax.spines.values():
     spine.set_visible(True)
