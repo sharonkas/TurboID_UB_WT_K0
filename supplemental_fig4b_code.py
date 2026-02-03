@@ -84,11 +84,11 @@ for j in range(len(saint_subset.columns) + 1):
     ax.axvline(j - 0.5, color='white', linewidth=0.5)
 
 ax.set_xticks(range(len(saint_subset.columns)))
-ax.set_xticklabels(saint_subset.columns, fontsize=8, rotation=45, ha='right')
+ax.set_xticklabels(saint_subset.columns, fontsize=14, rotation=45, ha='right')
 ax.xaxis.tick_bottom()
 
 ax.set_yticks(range(len(saint_subset)))
-ax.set_yticklabels(saint_subset.index, fontsize=7)
+ax.set_yticklabels(saint_subset.index, fontsize=14)
 
 for spine in ax.spines.values():
     spine.set_visible(True)
@@ -98,11 +98,12 @@ for spine in ax.spines.values():
 cbar = plt.colorbar(im, ax=ax, fraction=0.046, pad=0.04)
 cbar.set_label('SAINT Score', fontsize=11)
 cbar.outline.set_linewidth(1.5)
+cbar.ax.tick_params(labelsize=12)
 
 ax.set_title('Split-TurboID: WT-Ub vs K0-Ub Control\nDeSI1 WT and SE Interactions', 
              fontsize=13, fontweight='bold', pad=15)
 
-plt.tight_layout()
+# Keep the heatmap size fixed; avoid layout routines that would resize axes
 plt.savefig('supplemental_fig4b_heatmap.png', dpi=300, bbox_inches='tight')
 plt.close()
 
