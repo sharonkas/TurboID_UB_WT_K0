@@ -1,5 +1,6 @@
 # Claude Code workspace
 .claude/
+.idea/
 
 # macOS
 .DS_Store
@@ -28,3 +29,7 @@ share/python-wheels/
 .installed.cfg
 *.egg
 MANIFEST
+
+# Outputs
+*.png
+*.csv
